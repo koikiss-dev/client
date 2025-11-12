@@ -1,0 +1,20 @@
+# dependencias y build
+node_modules/
+dist/
+build/
+.vite/
+
+# credenciales y locales
+.env
+*.local
+
+# subidas y artefactos
+**/uploads/
+**/uploads/**
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

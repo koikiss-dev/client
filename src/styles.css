@@ -1,0 +1,1095 @@
+@import "tailwindcss";
+
+/* Dark por clase (Tailwind v4) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root{
+  /* Acento de UI (botones, focus, etc.) */
+  --accent: hsl(221 83% 53%);
+  --accent-foreground: #fff;
+  --ring: hsl(221 83% 53% / .45);
+
+  /* Paleta FX por defecto (neón) */
+  --fx1: #ff00e6;
+  --fx2: #00e1ff;
+  --fx3: #00ff87;
+  --surface: #0b0b12;
+}
+
+:root{ color-scheme: light dark; }
+html,body{ min-height:100%; }
+body{ @apply bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100; }
+
+.link{ @apply text-blue-600 hover:underline dark:text-blue-400; }
+.card{ @apply rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 shadow-sm; }
+
+/* ======== TEMAS FX (elige en runtime con data-fx="...") ======== */
+[data-fx="neon"]  { --fx1:#ff00e6; --fx2:#00e1ff; --fx3:#00ff87; }
+[data-fx="candy"] { --fx1:#ff3cac; --fx2:#784ba0; --fx3:#2b86c5; }
+[data-fx="retro"] { --fx1:#f72585; --fx2:#4361ee; --fx3:#4cc9f0; }
+[data-fx="holo"]  { --fx1:#a1ffce; --fx2:#faffd1; --fx3:#fcb045; }
+[data-fx="cyber"] { --fx1:#8a2be2; --fx2:#00ffff; --fx3:#39ff14; }
+[data-fx="sunset"]{ --fx1:#ff5f6d; --fx2:#ffc371; --fx3:#ffd166; }
+[data-fx="ocean"] { --fx1:#00c6ff; --fx2:#0072ff; --fx3:#00ffa3; }
+
+/* ======== FONDO “MESH” SUAVE (no tapa contenido) ======== */
+.app-bg{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(42rem 42rem at 16% 16%,
+      color-mix(in oklab, var(--fx1) 38%, transparent), transparent 62%),
+    radial-gradient(36rem 36rem at 85% 20%,
+      color-mix(in oklab, var(--fx2) 32%, transparent), transparent 60%),
+    radial-gradient(40rem 40rem at 40% 88%,
+      color-mix(in oklab, var(--fx3) 34%, transparent), transparent 62%);
+  opacity: .42; /* más bajo en claro */
+  animation: mesh-pan 28s ease-in-out infinite alternate;
+  filter: saturate(150%);
+}
+html.dark .app-bg{ opacity: .55; }
+
+@keyframes mesh-pan{
+  0%   { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: -30% 8%, 18% -18%, 12% 16%; }
+}
+
+/* ======== TARJETAS FX (SOLO LAS QUE MARQUES) ======== */
+[data-fx] .fx-card{
+  position: relative;
+  border-radius: 1.25rem;
+  padding: 1rem;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    conic-gradient(from 0deg, var(--fx1), var(--fx2), var(--fx3), var(--fx1)) border-box;
+  border: 1px solid transparent;
+  box-shadow:
+    0 0 0 .5px hsl(0 0% 100% / .06),
+    0 10px 24px rgba(0,0,0,.18),
+    0 0 40px color-mix(in oklab, var(--fx2) 22%, transparent);
+  transition: box-shadow .25s ease, transform .12s ease, background-color .25s ease;
+}
+[data-fx] .fx-card:hover{ transform: translateY(-1px); }
+
+html:not(.dark)[data-fx] .fx-card{ --surface:#ffffffF2; color:#0f172a; }
+html.dark[data-fx] .fx-card{ --surface:rgba(17,19,24,.92); color:#e5e7eb; }
+[data-fx] .fx-card :is(h1,h2,h3,h4,h5,h6,p,span,small,div,a){ color:inherit; }
+
+/* KPI vistoso (usa sobre métricas superiores) */
+.fx-kpi{
+  border-radius: 1.25rem;
+  padding: 1rem;
+  background:
+    radial-gradient(80% 140% at 20% 0%,
+      color-mix(in oklab, var(--fx2) 12%, transparent), transparent 60%),
+    linear-gradient(to bottom right, hsl(0 0% 100% / .08), hsl(0 0% 100% / .02));
+  border: 1px solid hsl(0 0% 100% / .08);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / .08),
+    0 20px 40px rgba(0,0,0,.18);
+}
+
+/* Tiles de la sección (Home) */
+.fx-tile{
+  border-radius: 1rem;
+  border: 1px solid hsl(0 0% 100% / .08);
+  background: linear-gradient(hsl(0 0% 100% / .03), hsl(0 0% 0% / .06));
+  transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.fx-tile:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.22),
+              0 0 28px color-mix(in oklab, var(--fx1) 20%, transparent);
+  border-color: rgba(0, 225, 255, 0.3); /* fallback for var(--fx2) with 30% opacity */
+}
+
+/* Botones */
+.btn-primary{ background:var(--accent); color:var(--accent-foreground); }
+.btn-primary:hover{ filter:brightness(1.06); }
+.btn-neon{
+  position: relative; padding: .6rem 1rem; border-radius: .9rem; font-weight: 600; color:#0b0b12;
+  background: linear-gradient(90deg, var(--fx1), var(--fx2), var(--fx3));
+  box-shadow:
+    0 8px 18px color-mix(in oklab, var(--fx2) 35%, transparent),
+    0 0 20px color-mix(in oklab, var(--fx1) 45%, transparent);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.btn-neon:hover{ transform: translateY(-1px) scale(1.02); filter:saturate(120%); }
+
+/* Focus ring accesible */
+:focus-visible{ outline:2px solid var(--ring); outline-offset:2px; }
+
+/* Sidebar aurora suave (no tapa texto) */
+.sidebar-aurora{
+  background:
+    radial-gradient(26rem 26rem at 10% 8%, color-mix(in oklab, var(--fx2) 18%, transparent), transparent 60%),
+    radial-gradient(22rem 22rem at 0% 50%, color-mix(in oklab, var(--fx1) 12%, transparent), transparent 60%);
+}
+
+/* Elevar contenido por encima del fondo mesh */
+.layer-content{ position:relative; z-index: 1; }
+/* Scrollbar personalizado (WebKit) */
+::-webkit-scrollbar{ width:12px; height:12px; } 
+
+/* === FX de color para el área de contenido =============================== */
+
+/* El contenedor principal debe llevar .layer-content (ver Layout.jsx) */
+.layer-content { position: relative; }
+
+/* Capas “mesh/aurora” que pintan la franja superior y la esquina inferior */
+.mesh {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(60px) saturate(160%);
+  opacity: .9;
+  z-index: 0;
+}
+
+/* Cinta superior: justo bajo el header, degradados suaves */
+.mesh--ribbon {
+  left: 0; right: 0; top: 0; height: 140px;
+  background:
+    radial-gradient(40rem 10rem at 20% -20%, color-mix(in oklab, var(--fx1) 45%, transparent), transparent 65%),
+    radial-gradient(36rem 12rem at 60% -30%, color-mix(in oklab, var(--fx2) 40%, transparent), transparent 70%),
+    radial-gradient(30rem 10rem at 95% 0%,   color-mix(in oklab, var(--fx3) 40%, transparent), transparent 70%);
+  /* desvanecer hacia abajo para no interferir con texto */
+  -webkit-mask: linear-gradient(to bottom, black, transparent);
+          mask: linear-gradient(to bottom, black, transparent);
+}
+
+/* Esquina inferior derecha (gran halo) */
+.mesh--br {
+  width: 60vw; height: 60vh; right: -15vw; bottom: -20vh;
+  background:
+    radial-gradient(40rem 40rem at 30% 35%, color-mix(in oklab, var(--fx3) 45%, transparent), transparent 60%),
+    radial-gradient(22rem 22rem at 80% 70%, color-mix(in oklab, var(--fx2) 40%, transparent), transparent 65%);
+}
+
+/* Esquina inferior izquierda (suave, para balancear) */
+.mesh--lb {
+  width: 35vw; height: 40vh; left: -12vw; bottom: -10vh;
+  background:
+    radial-gradient(28rem 28rem at 70% 30%, color-mix(in oklab, var(--fx1) 35%, transparent), transparent 65%);
+}
+
+/* === Tarjeta “rica” para el formulario ================================== */
+.card-rich {
+  position: relative;
+  border-radius: 1.25rem;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(to bottom right,
+      color-mix(in oklab, var(--fx1) 6%, transparent),
+      color-mix(in oklab, var(--fx2) 6%, transparent)
+    ) padding-box,
+    color-mix(in oklab, white 78%, transparent); /* glassy */
+  box-shadow:
+    0 8px 28px rgba(0,0,0,.08),
+    0 0 0 .6px var(--ring) inset;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.dark .card-rich{
+  background:
+    linear-gradient(to bottom right,
+      color-mix(in oklab, var(--fx1) 12%, transparent),
+      color-mix(in oklab, var(--fx2) 12%, transparent)
+    ) padding-box,
+    rgba(8,8,12,.90);
+}
+
+/* Borde arcoíris muy sutil */
+.card-rich::before{
+  content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none;
+  background: conic-gradient(from 0deg, var(--fx1), var(--fx2), var(--fx3), var(--fx1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  padding:1px; opacity:.35;
+}
+
+/* Título con gradiente */
+.section-title{
+  background: linear-gradient(90deg, var(--fx1), var(--fx2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-weight:700;
+}
+
+/* Inputs con halo de color al foco */
+.input-fx{
+  width:100%;
+  padding:.6rem .8rem;
+  border-radius:.8rem;
+  border:1px solid rgba(120,120,120,.25);
+  background: rgba(255,255,255,.8);
+}
+.dark .input-fx{
+  border-color: rgba(120,120,120,.45);
+  background: rgba(12,12,16,.6);
+}
+.input-fx:focus{
+  outline:2px solid transparent;
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--fx2) 35%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--fx1) 22%, transparent);
+}
+
+/* Botón con gradiente (ya tienes .btn-neon; lo reafirmo aquí) */
+.btn-neon{
+  position:relative; padding:.7rem 1.1rem; border-radius:.9rem; font-weight:600; color:#0b0b12;
+  background: linear-gradient(90deg, var(--fx1), var(--fx2), var(--fx3));
+  box-shadow:
+    0 8px 18px color-mix(in oklab, var(--fx2) 35%, transparent),
+    0 0 20px color-mix(in oklab, var(--fx1) 45%, transparent);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.btn-neon:hover{ transform: translateY(-1px) scale(1.02); filter: saturate(115%); }
+
+
+/* Fondo con aurora que usa tu paleta (var(--fx1/2/3)) */
+.sidebar-aurora{
+  background:
+    radial-gradient(60rem 60rem at -10% 0%, color-mix(in oklab, var(--fx1) 24%, transparent), transparent 60%),
+    radial-gradient(42rem 42rem at 120% -10%, color-mix(in oklab, var(--fx2) 22%, transparent), transparent 60%),
+    radial-gradient(36rem 36rem at 40% 110%, color-mix(in oklab, var(--fx3) 20%, transparent), transparent 60%);
+}
+.dark .sidebar-aurora{
+  /* En oscuro, un pelín más saturado */
+  background:
+    radial-gradient(60rem 60rem at -10% 0%, color-mix(in oklab, var(--fx1) 30%, transparent), transparent 60%),
+    radial-gradient(42rem 42rem at 120% -10%, color-mix(in oklab, var(--fx2) 26%, transparent), transparent 60%),
+    radial-gradient(36rem 36rem at 40% 110%, color-mix(in oklab, var(--fx3) 24%, transparent), transparent 60%);
+}
+
+
+/* =========================
+   Intensidad del efecto aurora
+   ========================= */
+:root{
+  /* Valores por defecto (equivale a "medio") */
+  --aurora-p1: 18%;
+  --aurora-p2: 16%;
+  --aurora-p3: 14%;
+  --aurora-blur: 8px;
+  --aurora-glass-light: .60; /* opacidad del vidrio en modo claro */
+  --aurora-glass-dark:  .45; /* opacidad del vidrio en modo oscuro */
+}
+
+/* Presets listos para usar */
+[data-aurora="sutil"]{
+  --aurora-p1: 10%;
+  --aurora-p2: 9%;
+  --aurora-p3: 8%;
+  --aurora-blur: 6px;
+  --aurora-glass-light: .72;
+  --aurora-glass-dark:  .55;
+}
+[data-aurora="medio"]{
+  --aurora-p1: 18%;
+  --aurora-p2: 16%;
+  --aurora-p3: 14%;
+  --aurora-blur: 8px;
+}
+[data-aurora="fuerte"]{
+  --aurora-p1: 26%;
+  --aurora-p2: 24%;
+  --aurora-p3: 22%;
+  --aurora-blur: 9px;
+}
+[data-aurora="extremo"]{
+  --aurora-p1: 36%;
+  --aurora-p2: 32%;
+  --aurora-p3: 28%;
+  --aurora-blur: 10px;
+  --aurora-glass-light: .52;
+  --aurora-glass-dark:  .38;
+}
+
+/* === CHAT WIDGET — colores independientes del tema === */
+:root{
+  /* Paleta del chat (ajústala a tu gusto, es independiente del ThemeFxPicker) */
+  --chat-1: #ff3cac;
+  --chat-2: #784ba0;
+  --chat-3: #2b86c5;
+  --chat-ink: #ffffff;
+  --chat-grad: linear-gradient(135deg, var(--chat-1), var(--chat-2) 45%, var(--chat-3));
+}
+
+/* Botón flotante (FAB) */
+.chat-fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 70;
+  width: 60px; height: 60px; border-radius: 9999px; color: var(--chat-ink);
+  background: radial-gradient(120% 120% at 30% 30%, var(--chat-1), var(--chat-2) 55%, var(--chat-3));
+  border: 3px solid transparent;
+  box-shadow:
+    0 10px 30px color-mix(in oklab, var(--chat-2) 35%, transparent),
+    0 0 30px color-mix(in oklab, var(--chat-1) 40%, transparent);
+  transition: transform .15s ease, box-shadow .2s ease, filter .15s ease;
+}
+.chat-fab:hover { transform: translateY(-1px) scale(1.02); filter: saturate(115%); }
+.chat-fab:active { transform: translateY(0) scale(.98); }
+
+.chat-fab::after { /* aro exterior brillante */
+  content:""; position:absolute; inset:-5px; border-radius:inherit;
+  background: conic-gradient(from 0deg, var(--chat-1), var(--chat-2), var(--chat-3), var(--chat-1));
+  filter: blur(8px); opacity:.7; z-index:-1;
+}
+
+/* badge de notificaciones (opcional) */
+.chat-fab__badge{
+  position:absolute; right:-2px; top:-2px; width:18px; height:18px; border-radius:999px;
+  background:#ff3d6e; color:#fff; display:grid; place-items:center;
+  font-size:10px; font-weight:700; outline:2px solid #fff; 
+}
+
+/* Panel del chat */
+.chat-panel{
+  position: fixed; right: 24px; bottom: 100px; z-index: 70;
+  width: min(420px, 92vw); border-radius: 18px;
+  background: rgba(16,16,22,.82); color: #fff;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 40px color-mix(in oklab, var(--chat-3) 30%, transparent);
+  overflow: hidden;
+}
+
+/* Encabezado con gradiente */
+.chat-panel__header{
+  background: var(--chat-grad);
+  color: var(--chat-ink);
+  padding: 12px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.chat-close{
+  width: 28px; height: 28px; display:grid; place-items:center;
+  border-radius: 8px; background: rgba(255,255,255,.15);
+  transition: filter .15s ease; 
+}
+.chat-close:hover{ filter: brightness(1.1); }
+
+/* Cuerpo con lista de mensajes */
+.chat-panel__body{
+  max-height: 55vh; overflow-y: auto;
+  padding: 12px 14px; gap:10px; display:flex; flex-direction: column;
+  background:
+    radial-gradient(60rem 60rem at 110% 120%, color-mix(in oklab, var(--chat-2) 16%, transparent), transparent 60%),
+    radial-gradient(48rem 48rem at -10% -20%, color-mix(in oklab, var(--chat-1) 18%, transparent), transparent 60%);
+}
+
+/* Mensajes */
+.chat-msg{
+  max-width: 85%; padding: 10px 12px; border-radius: 14px;
+  background: rgba(255,255,255,.10); color:#fff; 
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+
+
+.chat-msg--me{
+  align-self: flex-end;
+  background: var(--chat-grad);
+  box-shadow: 0 4px 18px color-mix(in oklab, var(--chat-2) 35%, transparent);
+}
+.chat-time{ margin-top:4px; font-size:11px; opacity:.65; }
+
+/* Input */
+.chat-panel__input{
+  display:flex; gap:10px; align-items:center;
+  padding: 10px 12px; border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.12);
+}
+.chat-input{
+  flex:1; padding: 10px 12px; border-radius: 12px; outline: none; 
+  background: rgba(255,255,255,.06); color:#fff;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.chat-input::placeholder{ color: rgba(255,255,255,.55); }
+
+.chat-send{
+  padding: 10px 16px; border-radius: 12px; color:#0b0b12; font-weight: 700;
+  background: linear-gradient(90deg, var(--chat-1), var(--chat-2), var(--chat-3));
+  box-shadow: 0 8px 18px color-mix(in oklab, var(--chat-2) 35%, transparent);
+  transition: transform .12s ease, filter .12s ease;
+}
+.chat-send:hover{ transform: translateY(-1px); filter:saturate(115%); }
+.chat-send:disabled{ opacity:.6; transform:none; }
+/* =========================
+   Fin de client/src/styles.css
+   ========================= */
+
+   /* === PALETA DEL CHAT (independiente del tema global) === */
+:root{
+  --chat-1: #ff3cac;
+  --chat-2: #784ba0;
+  --chat-3: #2b86c5;
+  --chat-ink: #ffffff;
+  --chat-grad: linear-gradient(135deg, var(--chat-1), var(--chat-2) 45%, var(--chat-3));
+}
+
+/* Burbuja flotante con glow */
+.chat-fab{
+  position: fixed; right: 24px; bottom: 24px; z-index: 10000;
+  width: 60px; height: 60px; border-radius: 9999px; color: var(--chat-ink);
+  background: radial-gradient(120% 120% at 30% 30%, var(--chat-1), var(--chat-2) 55%, var(--chat-3));
+  border: 3px solid transparent;
+  box-shadow:
+    0 10px 30px color-mix(in oklab, var(--chat-2) 35%, transparent),
+    0 0 30px color-mix(in oklab, var(--chat-1) 40%, transparent);
+  transition: transform .15s ease, box-shadow .2s ease, filter .15s ease;
+}
+.chat-fab:hover { transform: translateY(-1px) scale(1.02); filter: saturate(115%); }
+.chat-fab--drag { transform: scale(.95); outline: 3px solid rgba(255,255,255,.5); }
+.chat-fab::after{
+  content:""; position:absolute; inset:-5px; border-radius:inherit; z-index:-1;
+  background: conic-gradient(from 0deg, var(--chat-1), var(--chat-2), var(--chat-3), var(--chat-1));
+  filter: blur(8px); opacity:.7;
+}
+.chat-fab__badge{
+  position:absolute; right:-2px; top:-2px; width:18px; height:18px; border-radius:999px;
+  background:#ff3d6e; color:#fff; display:grid; place-items:center;
+  font-size:10px; font-weight:700; outline:2px solid #fff;
+}
+
+/* Panel del chat */
+.chat-panel{
+  position: fixed; z-index: 10000;
+  width: min(420px, 92vw); height: min(520px, 84vh);
+  border-radius: 18px; overflow: hidden;
+  background: rgba(16,16,22,.86); color:#fff; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 40px color-mix(in oklab, var(--chat-3) 30%, transparent);
+}
+.chat-panel__header{
+  background: var(--chat-grad); color: var(--chat-ink);
+  padding: 12px 14px; display:flex; align-items:center; justify-content:space-between;
+}
+.chat-close{
+  width: 28px; height: 28px; display:grid; place-items:center;
+  border-radius: 8px; background: rgba(255,255,255,.18);
+}
+.chat-close:hover{ filter: brightness(1.1); }
+
+.chat-panel__body{
+  height: calc(100% - 112px); overflow-y:auto; padding: 12px 14px;
+  display:flex; flex-direction:column; gap: 10px;
+  background:
+    radial-gradient(60rem 60rem at 110% 120%, color-mix(in oklab, var(--chat-2) 16%, transparent), transparent 60%),
+    radial-gradient(48rem 48rem at -10% -20%, color-mix(in oklab, var(--chat-1) 18%, transparent), transparent 60%);
+}
+
+.chat-msg{
+  max-width: 85%; padding: 10px 12px; border-radius: 14px;
+  background: rgba(255,255,255,.10); color:#fff; box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.chat-msg--me{
+  align-self:flex-end; background: var(--chat-grad);
+  box-shadow: 0 4px 18px color-mix(in oklab, var(--chat-2) 35%, transparent);
+}
+.chat-time{ margin-top:4px; font-size:11px; opacity:.65; }
+
+.chat-panel__input{
+  display:flex; gap:10px; align-items:center;
+  padding: 10px 12px; border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.12);
+}
+.chat-input{
+  flex:1; padding: 10px 12px; border-radius: 12px; outline: none;
+  background: rgba(255,255,255,.06); color:#fff;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.chat-input::placeholder{ color: rgba(255,255,255,.55); }
+.chat-send{
+  padding: 10px 16px; border-radius: 12px; color:#0b0b12; font-weight: 700;
+  background: linear-gradient(90deg, var(--chat-1), var(--chat-2), var(--chat-3));
+  box-shadow: 0 8px 18px color-mix(in oklab, var(--chat-2) 35%, transparent);
+  transition: transform .12s ease, filter .12s ease;
+}
+.chat-send:hover{ transform: translateY(-1px); filter:saturate(115%); }
+.chat-send:disabled{ opacity:.6; transform:none; }
+
+
+/* =========================================================
+   CHAT DOCK — paleta "varonil" + centrado perfecto del ícono
+   (pegar al final de styles.css)
+   ========================================================= */
+
+/* Paleta navy → cobalt → cyan */
+:root{
+  --chat-1:#0b132b;  /* navy profundo */
+  --chat-2:#1d4ed8;  /* cobalt / blue-700 */
+  --chat-3:#06b6d4;  /* cyan-500 */
+  --chat-ink:#ffffff;
+}
+
+/* BURBUJA flotante */
+.chat-fab{
+  position: fixed;
+  z-index: 10000;
+  border-radius: 9999px;
+  display: grid;                /* centrado perfecto */
+  place-items: center;          /* centrado perfecto */
+  line-height: 0;               /* evita baseline del SVG */
+  color: var(--chat-ink);
+  cursor: grab;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(135deg, var(--chat-1), var(--chat-2) 48%, var(--chat-3));
+  box-shadow:
+    0 10px 26px color-mix(in oklab, var(--chat-2) 45%, transparent),
+    0 0 0 2px rgba(255,255,255,.06) inset;
+  transition: transform .12s ease, filter .15s ease, box-shadow .2s ease;
+}
+.chat-fab:hover{ filter: brightness(1.08); }
+.chat-fab:active{ transform: scale(.98); cursor: grabbing; }
+.chat-fab.dragging{ transform: scale(.96); box-shadow:
+  0 16px 36px color-mix(in oklab, var(--chat-2) 55%, transparent),
+  0 0 0 3px color-mix(in oklab, var(--chat-3) 40%, transparent) inset; }
+
+.chat-fab svg{ display:block; } /* quita el desfase del inline-svg */
+
+/* halo alrededor de la burbuja */
+.chat-fab__glow{
+  position:absolute; inset:-28%;
+  background:
+    radial-gradient(closest-side,
+      color-mix(in oklab, var(--chat-3) 25%, transparent), transparent 65%);
+  filter: blur(16px);
+  z-index:-1; border-radius:inherit;
+}
+
+/* badge de no leídos */
+.chat-badge{
+  position: absolute; right: -4px; top: -4px;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  border-radius: 9999px;
+  background: #ef4444; color: #fff; font-size: 11px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+}
+
+/* PANEL */
+.chat-panel{
+  position: fixed; z-index: 10000;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.05) inset;
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.92));
+  color: #0b0b12;
+}
+.dark .chat-panel{
+  background: linear-gradient(180deg, rgba(10,12,18,.96), rgba(10,12,18,.92));
+  color: #eef1f5;
+}
+
+/* CABECERA del panel con la misma paleta */
+.chat-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, var(--chat-1), var(--chat-2) 48%, var(--chat-3));
+  color: var(--chat-ink);
+}
+.chat-header__title{ font-weight: 700; }
+.chat-header__close{
+  display:inline-flex; align-items:center; justify-content:center;
+  width: 32px; height: 32px; border-radius: 10px;
+  color: var(--chat-ink);
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  transition: filter .15s ease, transform .1s ease;
+}
+.chat-header__close:hover{ filter: brightness(1.15); }
+.chat-header__close:active{ transform: scale(.96); }
+
+/* CONTENIDO */
+.chat-body{
+  padding: 12px; height: calc(100% - 112px);
+  overflow: auto;
+}
+.chat-empty{ opacity:.7; font-size: .9rem; }
+
+/* filas de mensaje */
+.chat-row{ margin-bottom: 10px; max-width: 80%; }
+.chat-row.me{ margin-left: auto; text-align: right; }
+
+.chat-pill{
+  display: inline-block;
+  padding: 8px 12px; border-radius: 14px;
+  font-size: .95rem;
+  background: color-mix(in oklab, #ffffff 70%, transparent);
+  color: #0b0b12;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+.dark .chat-pill{
+  background: rgba(255,255,255,.06);
+  color: #eef1f5;
+}
+.chat-pill.me{
+  background: linear-gradient(135deg, var(--chat-2), var(--chat-3));
+  color: var(--chat-ink);
+  box-shadow:
+    0 6px 18px color-mix(in oklab, var(--chat-2) 45%, transparent);
+}
+.chat-time{ font-size: 11px; opacity: .6; margin-top: 4px; }
+
+/* INPUT + ENVIAR */
+.chat-input{
+  display:flex; gap:8px; padding: 10px 12px;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+.chat-input input{
+  flex:1; min-width: 0;
+  padding: 10px 12px; border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.15);
+  background: rgba(255,255,255,.92); color: #0b0b12;
+  outline: none;
+}
+.dark .chat-input input{
+  border-color: rgba(255,255,255,.16);
+  background: rgba(22,26,34,.9); color: #eef1f5;
+}
+.chat-send{
+  padding: 10px 14px; border-radius: 12px;
+  color: var(--chat-ink);
+  background: linear-gradient(135deg, var(--chat-2), var(--chat-3));
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 8px 18px color-mix(in oklab, var(--chat-2) 45%, transparent);
+  transition: filter .15s ease, transform .1s ease;
+}
+.chat-send:hover{ filter: brightness(1.1); }
+.chat-send:active{ transform: translateY(1px) scale(.99); }
+.chat-send:disabled{
+  opacity:.6; transform:none;
+  background: rgba(255,255,255,.12);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* === FIX nativo: mostrar SIEMPRE el calendario/reloj === */
+:root input.input-fx[type="date"],
+:root input.input-fx[type="time"],
+:root input.input-fx[type="datetime-local"]{
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+  background-image: initial !important;
+}
+
+/* Indicador visible y clickeable */
+:root input.input-fx[type="date"]::-webkit-calendar-picker-indicator,
+:root input.input-fx[type="time"]::-webkit-calendar-picker-indicator,
+:root input.input-fx[type="datetime-local"]::-webkit-calendar-picker-indicator{
+  display: inline-block !important;
+  opacity: 1 !important;
+  width: 1.5rem; height: 1.5rem;
+  cursor: pointer;
+  margin: 0; padding: 0;
+}
+
+/* Si pones un iconito decorativo dentro del input, que NO bloquee clics */
+.input-icon--decorative{ pointer-events: none; }
+
+/* Espacio para el ícono nativo (derecha) */
+input.input-fx[type="date"],
+input.input-fx[type="time"],
+input.input-fx[type="datetime-local"]{
+  padding-right: 2.25rem; /* evita que el texto choque con el icono */
+}
+
+/* ——— opción rápida: hacer el icono blanco en dark ——— */
+.dark input.input-fx[type="date"]::-webkit-calendar-picker-indicator,
+.dark input.input-fx[type="time"]::-webkit-calendar-picker-indicator,
+.dark input.input-fx[type="datetime-local"]::-webkit-calendar-picker-indicator{
+  filter: invert(1) brightness(1.2) contrast(1.1); /* lo vuelve claro */
+  opacity: .95;
+}
+
+/* Burbujita de contraste detrás del icono (opcional, pero ayuda) */
+.input-fx--with-bubble{
+  background-image:
+    radial-gradient(12px 12px at calc(100% - 1.25rem) 50%,
+      rgba(255,255,255,.10), transparent 60%);
+  background-repeat: no-repeat;
+}
+.dark .input-fx--with-bubble{
+  background-image:
+    radial-gradient(12px 12px at calc(100% - 1.25rem) 50%,
+      rgba(255,255,255,.14), transparent 60%);
+}
+
+/* Quitar cualquier sticky/fixed heredado del footer */
+.footer--static {
+  position: static !important;
+  inset: auto !important;   /* top/right/bottom/left = auto */
+}
+
+
+html, body, #root { min-height: 100%; }
+body { margin: 0; }
+
+/* Si en algún momento ocultaste el indicador, quita esas reglas.
+   NO uses opacity:0 ni display:none en ::-webkit-calendar-picker-indicator */
+/* === Chat: autor, avatar y layout por mensaje ===================== */
+.chat-row { 
+  display: flex; 
+  gap: .5rem; 
+  align-items: flex-end; 
+  margin-bottom: 10px; 
+  max-width: 80%;
+}
+.chat-row.me { 
+  justify-content: flex-end; 
+  text-align: right; 
+  margin-left: auto; 
+}
+
+.chat-avatar{
+  width: 28px; height: 28px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .75rem;
+  background: linear-gradient(135deg, var(--chat-2), var(--chat-3));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.chat-bubble{
+  max-width: 85%;
+  display: flex; 
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.chat-meta{
+  font-size: .72rem;
+  opacity: .65;
+  margin: 0 .25rem .2rem .25rem;
+}
+
+/* --- ChatDock: pequeños estilos para autor/avatares --- */
+
+/* fila del mensaje en layout de chat */
+.chat-row{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:10px;
+  max-width: 90%;
+}
+.chat-row.me{
+  margin-left:auto;
+  justify-content:flex-end;
+}
+
+/* avatar redondo con iniciales (solo para mensajes ajenos) */
+.chat-avatar{
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+/* contenedor del globo + metadatos */
+.chat-bubble{
+  max-width: 78%;
+}
+.chat-meta{
+  font-size: 12px;
+  opacity: .75;
+  margin-bottom: 2px;
+}
+
+/* ya tienes .chat-pill y .chat-time en tu hoja; se reutilizan */
+/* === CHAT: emisor colorido / receptor neutro (sin cambiar JSX) ============ */
+
+/* Paleta (puedes cambiarlas a tu gusto) */
+:root{
+  --chat-out-1:#3b82f6;   /* blue-500  burbuja emisor */
+  --chat-out-2:#06b6d4;   /* cyan-500  burbuja emisor */
+  --chat-out-text:#ffffff;
+
+  --chat-in-bg: rgba(15,23,42,.06); /* burbuja receptor (modo claro) */
+  --chat-in-text:#0b0b12;
+
+  --chat-meta:#64748b; /* color del nombre/fecha */
+}
+.dark{
+  --chat-in-bg: rgba(255,255,255,.10); /* receptor en dark */
+  --chat-in-text:#eef1f5;
+  --chat-meta:#9aa4b2;
+}
+
+/* Panel (mantiene tu glass, pero aseguro consistencia) */
+.chat-panel{
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));
+}
+.dark .chat-panel{
+  background: linear-gradient(180deg, rgba(10,12,18,.96), rgba(10,12,18,.92));
+}
+
+/* Header con gradiente – si prefieres tu FX, cámbialo a var(--fx1/--fx2) */
+.chat-header{
+  background: linear-gradient(135deg, var(--fx1, #0ea5e9), var(--fx2, #6366f1));
+  color:#fff;
+}
+
+/* Layout de mensajes */
+.chat-panel .chat-row{
+  display:flex; gap:.6rem; margin:.35rem 0; max-width:88%;
+}
+.chat-panel .chat-row.me{
+  margin-left:auto; justify-content:flex-end;
+}
+
+/* Avatar (del receptor) */
+.chat-panel .chat-avatar{
+  width:34px; height:34px; border-radius:9999px;
+  display:grid; place-items:center;
+  font-weight:700; font-size:.8rem; color:#fff;
+  background: linear-gradient(135deg, var(--chat-out-1), var(--chat-out-2));
+  box-shadow: 0 4px 14px color-mix(in oklab, var(--chat-out-1) 40%, transparent);
+}
+
+/* Contenedor de texto + meta */
+.chat-panel .chat-bubble{ max-width:100%; }
+.chat-panel .chat-meta{
+  font-size:.78rem; color:var(--chat-meta);
+  margin:0 0 .25rem .25rem;
+}
+
+/* Burbuja del receptor */
+.chat-panel .chat-pill{
+  display:inline-block;
+  padding:.65rem .9rem; border-radius:14px;
+  background: var(--chat-in-bg); color: var(--chat-in-text);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+/* Burbuja del emisor (tú) */
+.chat-panel .chat-pill.me{
+  background: linear-gradient(135deg, var(--chat-out-1), var(--chat-out-2));
+  color: var(--chat-out-text);
+  box-shadow: 0 8px 18px color-mix(in oklab, var(--chat-out-1) 35%, transparent);
+}
+
+/* Hora */
+.chat-panel .chat-time{
+  font-size:.72rem; opacity:.6; margin:.25rem .25rem 0;
+}
+/* ===== Colores de TEXTO para el chat (emisor vs receptor) ===== */
+:root{
+  /* burbuja del EMISOR (tú) */
+  --chat-out-1:#2563eb;         /* fondo gradiente (si lo usas) */
+  --chat-out-2:#06b6d4;
+  --chat-out-fg:#ffffff;        /* ⬅ color del TEXTO del emisor */
+
+  /* burbuja del RECEPTOR */
+  --chat-in-bg: rgba(15,23,42,.06);
+  --chat-in-fg:#0f172a;         /* ⬅ color del TEXTO del receptor */
+}
+.dark{
+  --chat-in-bg: rgba(255,255,255,.10);
+  --chat-in-fg:#e5e7eb;         /* receptor en oscuro */
+}
+
+/* Receptor: texto y fondo */
+.chat-panel .chat-row .chat-pill{
+  background: var(--chat-in-bg);
+  color: var(--chat-in-fg) !important;   /* texto receptor */
+}
+/* Emisor: gradiente + texto claro */
+.chat-panel .chat-row.me .chat-pill{
+  background: linear-gradient(135deg, var(--chat-out-1), var(--chat-out-2));
+  color: var(--chat-out-fg) !important;  /* texto emisor */
+}
+/* Asegura que todo dentro de la burbuja herede el color de texto */
+.chat-panel .chat-row .chat-pill *{
+  color: inherit !important;
+}
+
+
+
+/* =========================================================
+   HISTORIAL DE EVALUACIONES — Base + “estilo 2ª imagen”
+   (buscador ANCHO + 2 controles compactos en 1 fila)
+   ========================================================= */
+
+/* ——— CONTENEDOR ——— */
+.eval-history{
+  position:relative; border-radius:16px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.92));
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border:1px solid rgba(0,0,0,.06);
+}
+.dark .eval-history{
+  background:linear-gradient(180deg, rgba(12,14,18,.72), rgba(12,14,18,.78));
+  border-color:rgba(255,255,255,.08);
+}
+
+/* halo pastel */
+.eval-history::before{
+  content:""; position:absolute; inset:-30% -10% -40% -10%; z-index:0;
+  background:
+    radial-gradient(60rem 30rem at 10% 10%, color-mix(in oklab, var(--fx2,#60a5fa) 22%, transparent), transparent 62%),
+    radial-gradient(60rem 30rem at 95% 0%,  color-mix(in oklab, var(--fx3,#34d399) 18%, transparent), transparent 66%),
+    radial-gradient(60rem 30rem at 25% 120%, color-mix(in oklab, var(--fx1,#f472b6) 20%, transparent), transparent 66%);
+  filter:blur(40px) saturate(140%); pointer-events:none; opacity:.45;
+}
+.dark .eval-history::before{ opacity:.40; }
+
+/* ——— TOOLBAR: UNA SOLA FILA (NO SE MODIFICA) ——— */
+.history-toolbar{
+  position:relative; z-index:1;
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px 8px;
+  flex-wrap:nowrap;
+}
+
+/* BUSCADOR ancho */
+.history-toolbar .search{
+  flex:1 1 560px;
+  min-width:360px; max-width:none; position:relative;
+}
+.history-toolbar .search input{
+  height:44px; border-radius:12px; padding-left:40px; font-size:.95rem;
+}
+.history-toolbar .search .icon{
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  opacity:.65; pointer-events:none; font-size:16px;
+}
+
+/* SELECTS compactos (empleado y período) */
+.history-toolbar .pill-select{
+  height:44px; min-width:220px;
+  border-radius:12px; padding:0 12px; font-size:.95rem;
+}
+
+/* (opcional) icono dentro del select si usas un span.ctrl-icon */
+.select-wrap{ position:relative; min-width:220px; flex:0 0 220px; }
+.select-wrap .ctrl-icon{
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  opacity:.65; font-size:16px; pointer-events:none;
+}
+.select-wrap .pill-select{ padding-left:40px; }
+
+/* PERÍODO como <input type="month"> */
+.month-select{
+  width:220px; min-width:220px;
+  -webkit-appearance:auto !important; appearance:auto !important;
+  background-image:initial !important;
+}
+.month-select::-webkit-calendar-picker-indicator{
+  display:inline-block !important; opacity:1 !important;
+  width:1.25rem; height:1.25rem; cursor:pointer;
+}
+
+/* Responsive: si no cabe, 2 filas */
+@media (max-width: 1024px){
+  .history-toolbar{ flex-wrap:wrap; }
+  .history-toolbar .search{ flex:1 1 100%; min-width:0; }
+}
+
+/* =========================================================
+   TABLA — COMPACTADA (solo contenido, no toolbar)
+   ========================================================= */
+.tbl{
+  position:relative; z-index:1;
+  width:100%; border-collapse:separate; border-spacing:0;
+  font-size:.84rem;                 /* ↓ más pequeño */
+}
+.tbl thead th{
+  text-align:left; font-weight:800;
+  padding:8px 10px;                 /* ↓ menos padding */
+  font-size:.86rem;
+  background:linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.02));
+  border-bottom:1px solid rgba(0,0,0,.08); color:#0b0b12;
+}
+.dark .tbl thead th{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-bottom-color:rgba(255,255,255,.10); color:#e5e7eb;
+}
+.tbl tbody td{
+  padding:8px 10px;                 /* ↓ menos padding */
+  border-bottom:1px solid rgba(0,0,0,.06);
+  vertical-align:middle;
+}
+.dark .tbl tbody td{ border-bottom-color:rgba(255,255,255,.08); }
+
+.tbl tbody td:first-child{ font-weight:600; }
+.tbl tbody td:nth-child(2),
+.tbl tbody td:nth-child(3){ white-space:nowrap; }
+
+.tbl tbody td .link{ color:#2563eb; text-decoration:none; }
+.tbl tbody td .link:hover{ text-decoration:underline; }
+
+/* mini-barras (más pequeñas) */
+.mini-bar{
+  position:relative; width:120px; height:4px;   /* ↓ antes 160x6 */
+  border-radius:999px; background:#e5e7eb; overflow:hidden;
+}
+.dark .mini-bar{ background:rgba(255,255,255,.18); }
+.mini-bar__fill{
+  position:absolute; inset:0 0 0 0; border-radius:inherit;
+  width:0; transition:width .25s ease;
+}
+.mini-bar--ok   .mini-bar__fill{ background:linear-gradient(90deg,#16a34a,#22c55e); }
+.mini-bar--warn .mini-bar__fill{ background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+.mini-bar--bad  .mini-bar__fill{ background:linear-gradient(90deg,#ef4444,#f87171); }
+.tbl .mini-bar + span{
+  min-width:32px; text-align:right; font-size:.75rem; opacity:.70; /* ↓ */
+}
+
+/* chips (estado) más pequeños */
+.chip{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.16rem .44rem;            /* ↓ */
+  border-radius:999px; font-size:.72rem; font-weight:700; /* ↓ */
+  border:1px solid transparent; white-space:nowrap;
+}
+.chip--success{ color:#15803d; background:#ecfdf5; border-color:#bbf7d0; }
+.chip--info{    color:#1e40af; background:#eef2ff; border-color:#c7d2fe; }
+.chip--danger{  color:#991b1b; background:#fef2f2; border-color:#fecaca; }
+.dark .chip--success{ color:#86efac; background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.28); }
+.dark .chip--info{    color:#93c5fd; background:rgba(59,130,246,.12); border-color:rgba(99,102,241,.28); }
+.dark .chip--danger{  color:#fca5a5; background:rgba(239,68,68,.12); border-color:rgba(248,113,113,.28); }
+
+/* header/filas redondeadas + altura de fila menor */
+.tbl thead th:first-child{ border-top-left-radius:12px; }
+.tbl thead th:last-child{  border-top-right-radius:12px; }
+.tbl tbody tr:last-child td{ border-bottom:none; }
+.tbl tbody tr{ height:40px; }       /* ↓ antes 52px */
+
+/* barra grande (paneles superiores) */
+.bar-gradient{ background:linear-gradient(90deg,#22c55e,#16a34a); }
+.dark .bar-gradient{ background:linear-gradient(90deg,#86efac,#22c55e); }
+
+/* coherencia inputs (toolbar) — NO CAMBIAR */
+input.input-fx, select.input-fx{ height:44px; border-radius:12px; }
+
+/* =========================================================
+   OVERRIDES — ULTRA COMPACTO (si activas .eval-ultra)
+   ========================================================= */
+.eval-history.eval-ultra h3{ font-size:.95rem; margin-bottom:.15rem; }
+.eval-history.eval-ultra .history-toolbar{ gap:8px; padding:8px 10px 2px; }
+.eval-history.eval-ultra .history-toolbar .search input,
+.eval-history.eval-ultra .pill-select,
+.eval-history.eval-ultra .history-toolbar .input-fx{ height:36px; border-radius:10px; font-size:.88rem; padding-left:34px; }
+.eval-history.eval-ultra .history-toolbar .search .icon{ left:10px; font-size:14px; }
+.eval-history.eval-ultra .tbl{ font-size:.80rem; }
+.eval-history.eval-ultra .tbl thead th{ padding:8px 10px; }
+.eval-history.eval-ultra .tbl tbody td{ padding:8px 10px; }
+.eval-history.eval-ultra .tbl tbody tr{ height:36px; }
+.eval-history.eval-ultra .mini-bar{ width:110px; height:4px; }
+.eval-history.eval-ultra .tbl .mini-bar + span{ min-width:30px; font-size:.74rem; }
+.eval-history.eval-ultra .chip{ padding:.14rem .42rem; font-size:.70rem; border-radius:999px; }
+.eval-history.eval-ultra::before{ opacity:.35; }
